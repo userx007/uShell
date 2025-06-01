@@ -1,0 +1,4 @@
+add_subdirectory(ushell_user_app)
+add_subdirectory(ushell_user_plugins)
+add_subdirectory(ushell_user_root)
+add_subdirectory(ushell_user_utils)
