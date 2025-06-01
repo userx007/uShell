@@ -1,6 +1,3 @@
-Sure! Here's a reformulated version:
-
-
 # uShell
 
 A highly configurable and modular micro shell (uShell) system written in C++, designed to serve as a framework for building command-line-based applications on both Linux and Windows platforms.
@@ -11,6 +8,10 @@ Additionally, the default plugin supports dynamic loading of external plugins, e
 ## 🔧 **Core Features**
 
 ### 1. **Input from user**
+- The command format is straightforward: `COMMAND arg1 arg2 ... argN`, where the arguments must align with the specifications set in the configuration file.
+- Any deviation in the number or type of parameters is identified and results in an error.
+- Strings that do not contain internal spaces can be used without `""` delimiters; however, if spaces are present, delimiters become required.
+- Numeric arguments are checked to ensure they fall within the declared range; if a value exceeds the allowed limits, an error is generated.
 - The maximum size of the input buffer is configurable in the global settings file: uShell/sources/ushell_settings/inc/ushell_core_settings.h, e.g.  #define uSHELL_MAX_INPUT_BUF_LEN (128U)
 - To prevent buffer overflow, the shell engine automatically blocks further user input once this limit is reached. When the buffer is full, the shell displays the character ] to indicate the limit has been hit and ignores any additional input.
 - In normal input mode, the user can only enter characters, delete backward using the Backspace key, or press Enter to execute the command.
@@ -26,14 +27,15 @@ Additionally, the default plugin supports dynamic loading of external plugins, e
 ### 3. **History Management**
 - Maintains a circular buffer of past commands.
 - Supports:
-  - Navigating history with arrow keys.
+  - Navigating history with arrow keys (up and down).
   - Executing previous commands by index.
   - Listing and resetting history.
 - Optional file-based history persistence (`.hist_<name>`).
+- Each instance, such as when plugins are loaded, generates its own dedicated file.
 
 ### 4. **Autocomplete**
 - Suggests and completes commands based on partial input.
-- Supports cycling through suggestions using arrow keys.
+- Supports cycling through suggestions using arrow keys (left and right).
 - Can be toggled on/off via shortcuts.
 
 ### 5. **Edit Mode**
@@ -80,8 +82,14 @@ Additionally, the default plugin supports dynamic loading of external plugins, e
 ### 10. **Platform Compatibility**
 - Designed to work across:
   - Windows (MSVC, MinGW)
-  - AVR microcontrollers
-  - Generic serial terminals
+  - Linux
+
+### 11. **Build**
+- The build process is designed for a Linux environment:
+  - Linux: Execute `./linux_build.sh` to start the build.
+  - MinGW: Install via `sudo apt-get install mingw-w64` on Linux, then run `./windows_build.sh`.
+  - Microsoft Visual Studio: Open the project folder, CMake will automatically detect the configuration, allowing you to initiate the build.
+
 
 ---
 
