@@ -210,6 +210,9 @@
 /* useful macros */
 #define uSHELL_NR_ELEMS(a) ((int)(sizeof(a)/sizeof(a[0])))
 
+/* invalid value to be returned in case of errors */
+#define uSHELL_INVALID_VALUE (-1)
+
 /* configuration files */
 #define uSHELL_DATA_TYPES_CONFIG_FILE  "ushell_core_datatypes.cfg"
 #define uSHELL_PROMPT_CONFIG_FILE      "ushell_core_prompt.cfg"

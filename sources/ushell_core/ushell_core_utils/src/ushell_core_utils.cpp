@@ -8,52 +8,36 @@
 #endif
 
 /*----------------------------------------------------------------------------*/
-char *strtok_ex(char *str, const char *delim, char **saveptr) {
-    if (!delim || (!str && !*saveptr)) return NULL;
-
-    if (*delim == '\0') {
-        *saveptr = NULL;
-        return (str && *str) ? str : NULL;
-    }
-
-    // If str is NULL, continue tokenizing from previous position
+char *strtok_ex(char *str, const char *delim, char **saveptr)
+{
+    if (!delim || (!str && !*saveptr) || !*delim) return NULL;
     if (!str) str = *saveptr;
 
-    // Skip initial delimiters manually
+    // Skip leading delimiters
     while (*str) {
-        bool isDelimiter = false;
-        for (const char *d = delim; *d; ++d) {
-            if (*str == *d) {
-                isDelimiter = true;
-                break;
-            }
-        }
-        if (!isDelimiter) break; // Found start of a valid token
+        const char *d = delim;
+        while (*d && *str != *d) ++d;
+        if (!*d) break; // Not a delimiter
         ++str;
     }
 
-    if (*str == '\0') return NULL; // No tokens left
+    if (!*str) return NULL;
 
     char *token = str;
 
-    // Find end of the token manually
+    // Find end of token
     while (*str) {
-        bool isDelimiter = false;
-        for (const char *d = delim; *d; ++d) {
-            if (*str == *d) {
-                isDelimiter = true;
-                break;
-            }
-        }
-        if (isDelimiter) break; // End of the token found
+        const char *d = delim;
+        while (*d && *str != *d) ++d;
+        if (*d) break; // Found delimiter
         ++str;
     }
 
     if (*str) {
         *str = '\0';
-        *saveptr = str + 1; // Move pointer forward
+        *saveptr = str + 1;
     } else {
-        *saveptr = NULL; // No more tokens
+        *saveptr = NULL;
     }
 
     return token;

@@ -151,17 +151,17 @@ static int uShellExecuteCommand( const command_s *psCmd )
 
 /******************************************************************************/
 #if (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
-    PluginInterface *pluginEntry( void *pvUserData )
+    PluginInterface *uShellPluginEntry( void *pvUserData )
     {
         pvLocalUserData = pvUserData;
         return &sShellInstance;
     }
 #else
-    PluginInterface *pluginEntry( void )
+    PluginInterface *uShellPluginEntry( void )
     {
         return &sShellInstance;
     }
 #endif /*(1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
-void pluginExit( PluginInterface *ptrPlugin );
+void uShellPluginExit( PluginInterface *ptrPlugin );
 
 

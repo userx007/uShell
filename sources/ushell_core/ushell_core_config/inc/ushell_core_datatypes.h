@@ -193,11 +193,11 @@ extern "C" {
 #endif
 
 #if (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
-    EXPORTED PluginInterface *pluginEntry(void *pvUserData);
+    EXPORTED PluginInterface *uShellPluginEntry(void *pvUserData);
 #else
-    EXPORTED PluginInterface *pluginEntry(void);
+    EXPORTED PluginInterface *uShellPluginEntry(void);
 #endif /*(1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
-EXPORTED void pluginExit( PluginInterface *ptrPlugin );
+EXPORTED void uShellPluginExit( PluginInterface *ptrPlugin );
 
 #ifdef __cplusplus
 }

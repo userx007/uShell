@@ -24,23 +24,23 @@
 ///////////////////////////////////////////////////////////////////
 
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
-    #define MAX_WORKBUFFER_SIZE    (256)
-
-    #define PLUGINS_FOLDER         "plugins"
-    #define PLUGINS_PREFIX         "lib"
-    #define PLUGINS_POSTFIX        "_plugin"
+    #define PLUGIN_PREFIX               "lib"
+    #define SHELL_PLUGINS_PATH          "plugins/"
     #ifdef _WIN32
-        #define PLUGINS_EXTENSION  ".dll"
+        #define SHELL_PLUGIN_EXTENSION  "_plugin.dll"
     #else
-        #define PLUGINS_EXTENSION  ".so"
+        #define SHELL_PLUGIN_EXTENSION  "_plugin.so"
     #endif
+
+    #define    SHELL_PLUGIN_ENTRY_POINT_NAME       "uShellPluginEntry"
+    #define    SHELL_PLUGIN_EXIT_POINT_NAME        "uShellPluginExit"
 #endif /* (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES) */
 
 ///////////////////////////////////////////////////////////////////
 //            PRIVATE INTERFACES DECLARATION                     //
 ///////////////////////////////////////////////////////////////////
 
-
+static int privListPlugins (const char *pstrCaption, const char *pstrPath, const char *pstrExtension);
 
 ///////////////////////////////////////////////////////////////////
 //            EXPORTED VARIABLES DECLARATION                     //
@@ -81,43 +81,12 @@ int vtest ( void )
 
 int list(void)
 {
-    char vstrPluginPathName[MAX_WORKBUFFER_SIZE] = {0};
-    struct dirent *entry = nullptr;
-    DIR *dir = opendir(PLUGINS_FOLDER);
-
-    if (NULL == dir) {
-        uSHELL_LOG(LOG_ERROR, "Failed to open the plugins folder [%s]", PLUGINS_FOLDER);
-        return 1;
-    }
-
-    while ((entry = readdir(dir)) != NULL) {
-        if (strstr(entry->d_name, PLUGINS_EXTENSION) != NULL) {
-            size_t name_len = strlen(entry->d_name);
-            size_t ext_len = strlen(PLUGINS_EXTENSION);
-            size_t postfix_len = strlen(PLUGINS_POSTFIX);
-
-            // Ensure safe modification of string
-            if (name_len > (ext_len + postfix_len)) {
-                entry->d_name[name_len - ext_len - postfix_len] = '\0';
-            }
-
-            // Secure snprintf usage with truncation check
-            int written = snprintf(vstrPluginPathName, MAX_WORKBUFFER_SIZE, "%30s%s%s | %s", entry->d_name, PLUGINS_POSTFIX, PLUGINS_EXTENSION, entry->d_name + strlen(PLUGINS_PREFIX));
-
-            if (written >= MAX_WORKBUFFER_SIZE) {
-                uSHELL_LOG(LOG_WARNING, "Plugin name truncated: [%s]", vstrPluginPathName);
-            }
-
-            uSHELL_LOG(LOG_INFO, "%s", vstrPluginPathName);
-        }
-    }
-
-    closedir(dir);
-
+#if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
+    privListPlugins("shell", SHELL_PLUGINS_PATH, SHELL_PLUGIN_EXTENSION);
+#endif /* (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES) */
     return 0;
 
 } /* list() */
-
 
 
 /*------------------------------------------------------------
@@ -125,38 +94,33 @@ int list(void)
 ------------------------------------------------------------*/
 int pload(char *pstrPluginName)
 {
+    int iRetVal = 0; // success
+    PluginLoaderFunctor<uShellInst_s> loader(PluginPathGenerator(SHELL_PLUGINS_PATH, PLUGIN_PREFIX, SHELL_PLUGIN_EXTENSION),
+                                             PluginEntryPointResolver(SHELL_PLUGIN_ENTRY_POINT_NAME, SHELL_PLUGIN_EXIT_POINT_NAME));
 
-    PluginLoaderFunctor<uShellInst_s> loader;
     auto handle = loader(pstrPluginName);
-
-    if (handle.first && handle.second) {
-        uSHELL_LOG(LOG_INFO, "Plugin loaded successfully!");
-    } else {
+    if (!handle.first || !handle.second) {
         uSHELL_LOG(LOG_ERROR, "Failed to load plugin.");
+        iRetVal = 0xFF;
+    } else {
+        uSHELL_LOG(LOG_INFO, "Plugin loaded successfully!");
+
+        auto typedPtr = std::static_pointer_cast<uShellInst_s>(handle.second);
+        uShellInst_s* rawPtr = typedPtr.get();
+
+        /* continue execution with the valid shell instance */
+        std::shared_ptr<Microshell> pShellPtr = Microshell::getShellSharedPtr(rawPtr, pstrPluginName);
+
+        /* this call is blocking until the shell is released with #q */
+        if (nullptr != pShellPtr) {
+            pShellPtr->Run();
+        }
     }
-
-    auto typedPtr = std::static_pointer_cast<uShellInst_s>(handle.second);
-    uShellInst_s* rawPtr = typedPtr.get();
-
-    /* continue execution with the valid shell instance */
-    std::shared_ptr<Microshell> pShellPtr = Microshell::getShellSharedPtr(rawPtr, pstrPluginName);
-
-    /* this call is blocking until the shell is released with #q */
-    if (nullptr != pShellPtr) {
-        pShellPtr->Run();
-    }
-
-    return 0;
+    return iRetVal;
 
 } /* pload() */
 
 #endif /* (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES) */
-
-
-///////////////////////////////////////////////////////////////////
-//            PRIVATE INTERFACES IMPLEMENTATION                  //
-///////////////////////////////////////////////////////////////////
-
 
 
 ///////////////////////////////////////////////////////////////////
@@ -181,3 +145,51 @@ void uShellUserHandleShortcut_Slash( const char *pstrArgs )
 } /* uShellUserHandleShortcut_Slash() */
 
 #endif /*(1 == uSHELL_IMPLEMENTS_USER_SHORTCUTS)*/
+
+
+///////////////////////////////////////////////////////////////////
+//               PRIVATE IMPLEMENTATION                          //
+///////////////////////////////////////////////////////////////////
+
+/*------------------------------------------------------------
+ * list the available plugins
+------------------------------------------------------------*/
+static int privListPlugins (const char *pstrCaption, const char *pstrPath, const char *pstrExtension)
+{
+    #define MAX_WORKBUFFER_SIZE    128U
+    char vstrPluginPathName[MAX_WORKBUFFER_SIZE] = {0};
+    struct dirent *entry = nullptr;
+    DIR *dir = opendir(pstrPath);
+
+    uSHELL_LOG(LOG_INFO, "--- %s plugins ---", pstrCaption);
+
+    if (NULL == dir) {
+        uSHELL_LOG(LOG_ERROR, "Failed to open the plugins folder [%s]", pstrPath);
+        return 1;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strstr(entry->d_name, pstrExtension) != NULL) {
+            size_t name_len = strlen(entry->d_name);
+            size_t ext_len = strlen(pstrExtension);
+
+            // Ensure safe modification of string
+            if (name_len > ext_len) {
+                entry->d_name[name_len - ext_len] = '\0';
+            }
+
+            int written = snprintf(vstrPluginPathName, MAX_WORKBUFFER_SIZE, "%30s%s | %s", entry->d_name, pstrExtension, entry->d_name + strlen(PLUGIN_PREFIX));
+            if (written >= MAX_WORKBUFFER_SIZE) {
+                uSHELL_LOG(LOG_WARNING, "Plugin name truncated: [%s]", vstrPluginPathName);
+            }
+
+            uSHELL_LOG(LOG_INFO, "%s", vstrPluginPathName);
+        }
+    }
+
+    closedir(dir);
+
+    return 0;
+
+} /* privListPlugins() */
+

@@ -16,17 +16,17 @@ int main()
 #if (0 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
 
     #if (0 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
-        Microshell::getShellPtr(pluginEntry(), pstrRootName)->Run();
+        Microshell::getShellPtr(uShellPluginEntry(), pstrRootName)->Run();
     #else
-        Microshell::getShellPtr(pluginEntry(nullptr), pstrRootName)->Run();
+        Microshell::getShellPtr(uShellPluginEntry(nullptr), pstrRootName)->Run();
     #endif /*(0 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
 
 #else /* (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES) */
 
     #if (0 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
-        std::shared_ptr<Microshell> pShellPtr = Microshell::getShellSharedPtr(pluginEntry(), pstrRootName);
+        std::shared_ptr<Microshell> pShellPtr = Microshell::getShellSharedPtr(uShellPluginEntry(), pstrRootName);
     #else
-        std::shared_ptr<Microshell> pShellPtr = Microshell::getShellSharedPtr(pluginEntry(nullptr), pstrRootName);
+        std::shared_ptr<Microshell> pShellPtr = Microshell::getShellSharedPtr(uShellPluginEntry(nullptr), pstrRootName);
     #endif /*(0 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
 
     if (nullptr != pShellPtr) {
