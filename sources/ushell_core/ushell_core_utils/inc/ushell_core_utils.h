@@ -14,3 +14,8 @@ char *strtok_ex( char *str, const char *delim, char **saveptr );
 #ifdef uSHELL_IMPLEMENTS_NUMBERS_FLOAT
     bool asc2float( const char *s, numfp_t *pFloatTypeVar );
 #endif /* uSHELL_IMPLEMENTS_NUMBERS_FLOAT*/
+
+#if (1 == uSHELL_IMPLEMENTS_HEXLIFY)
+    void hexlify( const uint8_t *bytes, size_t length, char *output);
+    bool unhexlify( const char *hexstr, uint8_t *output, size_t *out_len);
+#endif /* (1 == uSHELL_IMPLEMENTS_HEXLIFY) */

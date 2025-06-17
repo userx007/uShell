@@ -1,11 +1,10 @@
 #include "ushell_core_utils.h"
 #include "ushell_core_printout.h"
 
-#include <cstddef>
+#include <stddef.h>
 #include <ctype.h>
-#if defined(_WIN32)
-#include <windows.h>
-#endif
+#include <stdint.h>
+
 
 /*----------------------------------------------------------------------------*/
 char *strtok_ex(char *str, const char *delim, char **saveptr)
@@ -51,27 +50,45 @@ bool asc2int(const char *s, BIGNUM_T *pNumber)
     BIGNUM_T numValue = 0;
     bool bRetVal = true;
 
-    if(!s || *s == '\0') return false;
+    if (!s || *s == '\0') return false;
 
 #if (1 == uSHELL_SUPPORTS_SIGNED_TYPES)
     bool bNegative = false;
-    if(*s == '-') {
+    if (*s == '-') {
         bNegative = true;
         s++;
     }
 #endif
 
-    int multiplier = 10;
-    if(*s == '0' && tolower(*(s + 1)) == 'x' && *(s + 2) != '\0') {
-        s += 2;
-        multiplier = 16;
+    int base = 10;
+    if (*s == '0') {
+        if (tolower(*(s + 1)) == 'x') {
+            base = 16;
+            s += 2;
+        } else if (tolower(*(s + 1)) == 'b') {
+            base = 2;
+            s += 2;
+        } else if (tolower(*(s + 1)) == 'o') {
+            base = 8;
+            s += 2;
+        }
     }
 
-    while(*s) {
-        if(isdigit(*s)) numValue = numValue * multiplier + (*s - '0');
-        else if(isalpha(*s) && tolower(*s) >= 'a' && tolower(*s) <= 'f')
-            numValue = numValue * multiplier + (tolower(*s) - 'a' + 10);
-        else return false;
+    while (*s) {
+        char c = tolower(*s);
+        int digit;
+
+        if (isdigit(c)) {
+            digit = c - '0';
+        } else if (isalpha(c)) {
+            digit = c - 'a' + 10;
+        } else {
+            return false;
+        }
+
+        if (digit >= base) return false;
+
+        numValue = numValue * base + digit;
         s++;
     }
 
@@ -156,3 +173,43 @@ int dump(BIGNUM_T address, num32_t length, bool show_address)
     return length;
 }
 
+
+#if (1 == uSHELL_IMPLEMENTS_HEXLIFY)
+/*----------------------------------------------------------------------------*/
+void hexlify(const uint8_t *bytes, size_t length, char *output)
+{
+    const char hex_chars[] = "0123456789ABCDEF";
+    for (size_t i = 0; i < length; ++i) {
+        output[i * 2]     = hex_chars[(bytes[i] >> 4) & 0x0F];
+        output[i * 2 + 1] = hex_chars[bytes[i] & 0x0F];
+    }
+    output[length * 2] = '\0'; // Null-terminate the string
+}
+
+
+/*----------------------------------------------------------------------------*/
+bool unhexlify(const char *hexstr, uint8_t *output, size_t *out_len)
+{
+    size_t len = 0;
+
+    // Must be even length
+    for (const char *p = hexstr; *p; ++p) len++;
+    if (len % 2 != 0) return false;
+
+    *out_len = len / 2;
+
+    for (size_t i = 0; i < *out_len; ++i) {
+        char high = toupper(hexstr[i * 2]);
+        char low  = toupper(hexstr[i * 2 + 1]);
+
+        if (!isxdigit(high) || !isxdigit(low)) return false;
+
+        uint8_t high_val = (high >= 'A') ? (high - 'A' + 10) : (high - '0');
+        uint8_t low_val  = (low  >= 'A') ? (low  - 'A' + 10) : (low  - '0');
+
+        output[i] = (high_val << 4) | low_val;
+    }
+
+    return true;
+}
+#endif /* (1 == uSHELL_IMPLEMENTS_HEXLIFY) */
