@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ushell_core_settings.h"
+#include <stddef.h>
 
 #define uSHELL_ISPRINT(c)  (((c) >= 0x20) && ((c) <= 0x7e))
 
