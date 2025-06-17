@@ -9,8 +9,13 @@
 /*----------------------------------------------------------------------------*/
 char *strtok_ex(char *str, const char *delim, char **saveptr)
 {
-    if (!delim || (!str && !*saveptr) || !*delim) return NULL;
-    if (!str) str = *saveptr;
+    if (!delim || (!str && !*saveptr) || !*delim) {
+        return NULL;
+    }
+
+    if (!str) {
+        str = *saveptr;
+    }
 
     // Skip leading delimiters
     while (*str) {
@@ -20,7 +25,9 @@ char *strtok_ex(char *str, const char *delim, char **saveptr)
         ++str;
     }
 
-    if (!*str) return NULL;
+    if (!*str) {
+        return NULL;
+    }
 
     char *token = str;
 
@@ -50,7 +57,9 @@ bool asc2int(const char *s, BIGNUM_T *pNumber)
     BIGNUM_T numValue = 0;
     bool bRetVal = true;
 
-    if (!s || *s == '\0') return false;
+    if (!s || *s == '\0') {
+        return false;
+    }
 
 #if (1 == uSHELL_SUPPORTS_SIGNED_TYPES)
     bool bNegative = false;
@@ -86,7 +95,9 @@ bool asc2int(const char *s, BIGNUM_T *pNumber)
             return false;
         }
 
-        if (digit >= base) return false;
+        if (digit >= base) {
+            return false;
+        }
 
         numValue = numValue * base + digit;
         s++;
@@ -111,7 +122,9 @@ bool asc2float(const char *s, numfp_t *pFloatTypeVar)
     long lValue = 0;
     numfp_t fptFraction = 1.0;
 
-    if(!s || *s == '\0') return false;
+    if(!s || *s == '\0') {
+        return false;
+    }
 
     if(*s == '-') {
         bNegative = true;
@@ -120,12 +133,18 @@ bool asc2float(const char *s, numfp_t *pFloatTypeVar)
 
     while(*s) {
         if(*s == '.') {
-            if(bFraction || *(s + 1) == '\0') return false;
+            if(bFraction || *(s + 1) == '\0') {
+                return false;
+            }
             bFraction = true;
         } else if(isdigit(*s)) {
             lValue = lValue * 10 + (*s - '0');
-            if(bFraction) fptFraction *= 0.1;
-        } else return false;
+            if(bFraction) {
+                fptFraction *= 0.1;
+            }
+        } else {
+            return false;
+        }
         s++;
     }
 
@@ -146,7 +165,9 @@ int dump(BIGNUM_T address, num32_t length, bool show_address)
     char *p = (char*)address;
 #endif
 
-    if(!p) return -1;
+    if(!p) {
+        return 0;
+    }
 
     int nr_lines = length / uSHELL_DUMP_ELEM_PER_LINE;
     int last_line_len = length % uSHELL_DUMP_ELEM_PER_LINE;
@@ -168,8 +189,6 @@ int dump(BIGNUM_T address, num32_t length, bool show_address)
         }
         uSHELL_PRINTF("\n");
     }
-
-#undef uSHELL_DUMP_ELEM_PER_LINE
     return length;
 }
 
@@ -193,8 +212,13 @@ bool unhexlify(const char *hexstr, uint8_t *output, size_t *out_len)
     size_t len = 0;
 
     // Must be even length
-    for (const char *p = hexstr; *p; ++p) len++;
-    if (len % 2 != 0) return false;
+    for (const char *p = hexstr; *p; ++p) {
+        len++;
+    }
+
+    if (len % 2 != 0) {
+        return false;
+    }
 
     *out_len = len / 2;
 
@@ -202,7 +226,9 @@ bool unhexlify(const char *hexstr, uint8_t *output, size_t *out_len)
         char high = toupper(hexstr[i * 2]);
         char low  = toupper(hexstr[i * 2 + 1]);
 
-        if (!isxdigit(high) || !isxdigit(low)) return false;
+        if (!isxdigit(high) || !isxdigit(low)) {
+            return false;
+        }
 
         uint8_t high_val = (high >= 'A') ? (high - 'A' + 10) : (high - '0');
         uint8_t low_val  = (low  >= 'A') ? (low  - 'A' + 10) : (low  - '0');
