@@ -186,18 +186,18 @@ typedef struct {
 #endif
 
 
-using PluginInterface = uShellInst_s;
+using uShellPluginInterface = uShellInst_s;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #if (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
-    EXPORTED PluginInterface *uShellPluginEntry(void *pvUserData);
+    EXPORTED uShellPluginInterface *uShellPluginEntry(void *pvUserData);
 #else
-    EXPORTED PluginInterface *uShellPluginEntry(void);
+    EXPORTED uShellPluginInterface *uShellPluginEntry(void);
 #endif /*(1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
-EXPORTED void uShellPluginExit( PluginInterface *ptrPlugin );
+EXPORTED void uShellPluginExit( uShellPluginInterface *ptrPlugin );
 
 #ifdef __cplusplus
 }

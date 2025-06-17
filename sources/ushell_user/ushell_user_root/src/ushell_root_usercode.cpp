@@ -11,12 +11,6 @@
 #else
     #include <dirent.h>
 #endif
-
-#ifdef _WIN32
-    #include <windows.h>
-#else
-    #include <dlfcn.h>
-#endif /* _WIN32 */
 #endif /*(1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)*/
 
 ///////////////////////////////////////////////////////////////////
@@ -46,25 +40,14 @@ static int privListPlugins (const char *pstrCaption, const char *pstrPath, const
 //            EXPORTED VARIABLES DECLARATION                     //
 ///////////////////////////////////////////////////////////////////
 
+
 #if (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
     void *pvLocalUserData = nullptr;
 #endif /* (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA) */
 
-///////////////////////////////////////////////////////////////////
-//                 USER COMMANDS IMPLEMENTATION                  //
-///////////////////////////////////////////////////////////////////
-
-int vtest ( void )
-{
-    uSHELL_LOG(LOG_INFO, "vtest called ...");
-
-    return 1;
-
-} /* vtest */
-
 
 ///////////////////////////////////////////////////////////////////
-//       PLUGIN RELATED  PUBLIC INTERFACES IMPLEMENTATION        //
+//            USER COMMANDS IMPLEMENTATION                       //
 ///////////////////////////////////////////////////////////////////
 
 
@@ -72,15 +55,9 @@ int vtest ( void )
 /*------------------------------------------------------------
  * list all the available plugins
 ------------------------------------------------------------*/
-
-#include <cstring>
-#include <cstdio>
-#include <dirent.h>
-#include <unistd.h>
-
-
 int list(void)
 {
+
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
     privListPlugins("shell", SHELL_PLUGINS_PATH, SHELL_PLUGIN_EXTENSION);
 #endif /* (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES) */

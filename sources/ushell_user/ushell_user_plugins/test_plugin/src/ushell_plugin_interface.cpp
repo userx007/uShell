@@ -145,19 +145,19 @@ static uShellInst_s sShellInstance = {
 extern "C"
 {
 #if (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
-    EXPORTED PluginInterface *uShellPluginEntry( void *pvUserData )
+    EXPORTED uShellPluginInterface *uShellPluginEntry( void *pvUserData )
     {
         pvLocalUserData = pvUserData;
         return &sShellInstance;
     }
 #else
-    EXPORTED PluginInterface *uShellPluginEntry( void )
+    EXPORTED uShellPluginInterface *uShellPluginEntry( void )
     {
         return &sShellInstance;
     }
 #endif /*(1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
 
-    EXPORTED void uShellPluginExit( PluginInterface *ptrPlugin )
+    EXPORTED void uShellPluginExit( uShellPluginInterface *ptrPlugin )
     {
         (void)ptrPlugin;
     }
