@@ -156,8 +156,10 @@ void Microshell::m_Init(const char *pstrPromptExt)
 #endif /* (1 == uSHELL_SCRIPT_MODE) */
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
     }
-    m_pInst->bKeepRuning = true;
 #endif /*(1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)*/
+#if (1 == uSHELL_IMPLEMENTS_SHELL_EXIT)
+    m_pInst->bKeepRuning = true;
+#endif /*(1 == uSHELL_IMPLEMENTS_SHELL_EXIT)*/
     m_CorePrintPrompt();
 } /* m_Init() */
 

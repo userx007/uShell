@@ -23,7 +23,7 @@
 
 /* minor features */
 #define uSHELL_IMPLEMENTS_SHELL_EXIT             1
-#define uSHELL_IMPLEMENTS_CONFIRM_REQUEST        0
+#define uSHELL_IMPLEMENTS_CONFIRM_REQUEST        1
 #define uSHELL_IMPLEMENTS_DISABLE_ECHO           0
 /* utilities */
 #define uSHELL_IMPLEMENTS_DUMP                   0
