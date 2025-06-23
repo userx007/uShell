@@ -71,6 +71,7 @@ private:
     static void m_CoreShowTypes( void );
     static void m_CorePutChars( const char *pstrArray, int iNrChars, const bool bNewLine );
 #endif /* (1 == uSHELL_IMPLEMENTS_COMMAND_HELP)*/
+    static void m_CoreShowCmd( int iFctIndex );
     static void m_CoreShowCmdsList( void );
 
 #if defined(uSHELL_IMPLEMENTS_STRINGS)
