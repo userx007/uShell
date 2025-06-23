@@ -1,4 +1,7 @@
 #include "ushell_core.h"
+#include "ushell_core_utils.h"
+#include "ushell_core_printout.h"
+#include "ushell_core_settings.h"
 #include "ushell_user_plugin_loader.h"
 #include "ushell_user_logger.h"
 
