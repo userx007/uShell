@@ -40,7 +40,9 @@ public:
     static std::shared_ptr<Microshell> getShellSharedPtr( uShellInst_s *psShellInst, const char *pstrPromptExt );
 #endif /*(1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)*/
     void Run( void );
+#if (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER)
     bool Execute( const char *pstrCommand );
+#endif /* (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER) */
     ~Microshell();
 
 private:

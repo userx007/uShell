@@ -202,7 +202,7 @@ void hexlify(const uint8_t *bytes, size_t length, char *output)
         output[i * 2]     = hex_chars[(bytes[i] >> 4) & 0x0F];
         output[i * 2 + 1] = hex_chars[bytes[i] & 0x0F];
     }
-    output[length * 2] = '\0'; // nullptr-terminate the string
+    output[length * 2] = '\0'; // Null-terminate the string
 }
 
 

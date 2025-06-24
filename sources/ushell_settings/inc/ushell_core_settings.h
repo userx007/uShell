@@ -8,8 +8,9 @@
 #define uSHELL_SCRIPT_MODE                       0
 
 /* user-app settings */
-#define uSHELL_SUPPORTS_MULTIPLE_INSTANCES       1
-#define uSHELL_SUPPORTS_EXTERNAL_USER_DATA       0
+#define uSHELL_SUPPORTS_MULTIPLE_INSTANCES       1  /* allow a nested shell for plugins */
+#define uSHELL_SUPPORTS_EXTERNAL_USER_DATA       0  /* allow the shell to access external data */
+#define uSHELL_SUPPORTS_COMMAND_AS_PARAMETER     1  /* enable Execute(command) interface */
 
 /* major features */
 #define uSHELL_IMPLEMENTS_HISTORY                1
@@ -52,7 +53,7 @@
 /* implementation specific */
 #define uSHELL_MAX_INPUT_BUF_LEN                 (128U)
 #define uSHELL_PROMPT_MAX_LEN                    (20U)
-#define uSHELL_HISTORY_DEPTH                     (1000U)
+#define uSHELL_HISTORY_DEPTH                     (100U)
 #if (1 == uSHELL_SUPPORTS_COLORS)
 #define uSHELL_PROMPT_COLOR                      "\033[96m"     // Bright Cyan
 #define uSHELL_INFO_HEADER_COLOR                 "\033[94m"     // Bright Blue
@@ -96,7 +97,7 @@
     #undef  uSHELL_IMPLEMENTS_HISTORY
     #define uSHELL_IMPLEMENTS_HISTORY            0
     #undef  uSHELL_IMPLEMENTS_SAVE_HISTORY
-    #define uSHELL_IMPLEMENTS_SAVE_HISTORY       1
+    #define uSHELL_IMPLEMENTS_SAVE_HISTORY       0
     #undef  uSHELL_IMPLEMENTS_AUTOCOMPLETE
     #define uSHELL_IMPLEMENTS_AUTOCOMPLETE       0
     #undef  uSHELL_IMPLEMENTS_EDITMODE

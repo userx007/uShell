@@ -105,6 +105,7 @@ void Microshell::Run(void)
 } /* Run() */
 
 
+#if (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER)
 /*----------------------------------------------------------------------------*/
 bool Microshell::Execute(const char *pstrCommand)
 {
@@ -122,7 +123,7 @@ bool Microshell::Execute(const char *pstrCommand)
     }
     return bRetVal;
 } /* Execute() */
-
+#endif /* (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER) */
 
 /*==============================================================================
                     PRIVATE INTERFACES IMPLEMENTATION
