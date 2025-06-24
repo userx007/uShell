@@ -12,7 +12,7 @@
 #define uSHELL_SUPPORTS_EXTERNAL_USER_DATA       0
 
 /* major features */
-#define uSHELL_IMPLEMENTS_HISTORY                0
+#define uSHELL_IMPLEMENTS_HISTORY                1
 #define uSHELL_IMPLEMENTS_SAVE_HISTORY           1
 #define uSHELL_IMPLEMENTS_AUTOCOMPLETE           1
 #define uSHELL_IMPLEMENTS_EDITMODE               1
@@ -96,7 +96,7 @@
     #undef  uSHELL_IMPLEMENTS_HISTORY
     #define uSHELL_IMPLEMENTS_HISTORY            0
     #undef  uSHELL_IMPLEMENTS_SAVE_HISTORY
-    #define uSHELL_IMPLEMENTS_SAVE_HISTORY       0
+    #define uSHELL_IMPLEMENTS_SAVE_HISTORY       1
     #undef  uSHELL_IMPLEMENTS_AUTOCOMPLETE
     #define uSHELL_IMPLEMENTS_AUTOCOMPLETE       0
     #undef  uSHELL_IMPLEMENTS_EDITMODE

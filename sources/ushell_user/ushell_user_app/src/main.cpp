@@ -17,6 +17,11 @@ int main()
 
     #if (0 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
         Microshell::getShellPtr(uShellPluginEntry(), pstrRootName)->Run();
+#if 0  // call options
+        Microshell *pShell = Microshell::getShellPtr(uShellPluginEntry(), pstrRootName);
+        pShell->Execute("vtest");
+        pShell->Run();
+#endif
     #else
         Microshell::getShellPtr(uShellPluginEntry(nullptr), pstrRootName)->Run();
     #endif /*(0 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/

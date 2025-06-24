@@ -85,10 +85,7 @@ void Microshell::Run(void)
     m_CorePrintPrompt();
     while(m_Execute()) {}
 #if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-    if(nullptr != m_pInst->pfileHistory) {
-        fclose(m_pInst->pfileHistory);
-        m_pInst->pfileHistory = nullptr;
-    }
+    m_HistoryCloseFile();
 #endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
     if(0 == --m_iInstanceCounter) {
@@ -107,18 +104,21 @@ void Microshell::Run(void)
 #endif /*(1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)*/
 } /* Run() */
 
+
 /*----------------------------------------------------------------------------*/
 bool Microshell::Execute(const char *pstrCommand)
 {
     bool bRetVal = false;
-    if((nullptr != pstrCommand) && (strlen(pstrCommand) < uSHELL_MAX_INPUT_BUF_LEN - 1)) {
+    int iLen = strlen(pstrCommand) + 1;
+    if( (nullptr != pstrCommand) && (iLen < uSHELL_MAX_INPUT_BUF_LEN) ) {
         strcpy(m_pstrInput, pstrCommand);
+#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
+        m_iInputPos = iLen;
+        m_HistoryWriteFile();
+#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY) */
         if( (uSHELL_ERR_OK == m_CoreParseCommand()) && (m_pInst->pfExec(&m_sCommand) >= 0) ) {
             bRetVal = true;
         }
-#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-        m_HistoryWriteFile();
-#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY) */
     }
     return bRetVal;
 } /* Execute() */
@@ -127,6 +127,7 @@ bool Microshell::Execute(const char *pstrCommand)
 /*==============================================================================
                     PRIVATE INTERFACES IMPLEMENTATION
 ==============================================================================*/
+
 
 /*----------------------------------------------------------------------------*/
 Microshell::Microshell(uShellInst_s *psShellInst, const char *pstrPromptExt)
@@ -137,6 +138,15 @@ Microshell::Microshell(uShellInst_s *psShellInst, const char *pstrPromptExt)
     m_pInst = psShellInst;
     m_Init(pstrPromptExt);
 } /* Microshell() */
+
+
+/*----------------------------------------------------------------------------*/
+Microshell::~Microshell()
+{
+#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
+    m_HistoryCloseFile();
+#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY) */
+} /* ~Microshell() */
 
 
 /*----------------------------------------------------------------------------*/
@@ -1643,16 +1653,6 @@ bool Microshell::m_CircBufItemExists(const void* pElem)
 ==============================================================================*/
 
 /*----------------------------------------------------------------------------*/
-#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-void Microshell::m_HistoryInitFile(const char *pstrFileName)
-{
-    uSHELL_SNPRINTF(m_pstrInput, sizeof(m_pstrInput), ".hist_%s", pstrFileName);
-    m_pInst->pfileHistory = fopen(m_pstrInput, "a+");
-} /* m_HistoryInitFile() */
-#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
-
-
-/*----------------------------------------------------------------------------*/
 void Microshell::m_HistoryInit(const char *pstrFileName)
 {
     if(true == (m_sHistory.bInitialized = m_CircBufInit())) {
@@ -1746,19 +1746,6 @@ void Microshell::m_HistoryWrite(void)
 
 
 /*----------------------------------------------------------------------------*/
-#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-void Microshell::m_HistoryWriteFile(void)
-{
-    if(nullptr !=  m_pInst->pfileHistory) {
-        fwrite(m_pstrInput, sizeof(char), m_iInputPos, m_pInst->pfileHistory);
-        fwrite("\n", sizeof(char), 1, m_pInst->pfileHistory);
-    } else {
-        m_CorePrintMessage(3, 10);    /* history nofile*/
-    }
-} /* m_HistoryWriteFile() */
-#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
-
-/*----------------------------------------------------------------------------*/
 void Microshell::m_HistoryReset(void)
 {
     if(true == m_sHistory.bInitialized) {
@@ -1826,7 +1813,7 @@ void Microshell::m_HistoryLoadFromFile(void)
 
 
 /*----------------------------------------------------------------------------*/
-inline void Microshell::m_HistoryReload(void)
+void Microshell::m_HistoryReload(void)
 {
     if(true == m_sHistory.bInitialized) {
         m_CircBufDeinit(uSHELL_DEINIT_PARTIAL);
@@ -1835,6 +1822,38 @@ inline void Microshell::m_HistoryReload(void)
 }/* m_HistoryReload() */
 
 #endif /* ((1 == uSHELL_IMPLEMENTS_HISTORY) && (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)) */
+
+
+#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
+/*----------------------------------------------------------------------------*/
+void Microshell::m_HistoryInitFile(const char *pstrFileName)
+{
+    uSHELL_SNPRINTF(m_pstrInput, sizeof(m_pstrInput), ".hist_%s", pstrFileName);
+    m_pInst->pfileHistory = fopen(m_pstrInput, "a+");
+} /* m_HistoryInitFile() */
+
+
+/*----------------------------------------------------------------------------*/
+void Microshell::m_HistoryWriteFile(void)
+{
+    if(nullptr != m_pInst->pfileHistory) {
+        fwrite(m_pstrInput, sizeof(char), m_iInputPos, m_pInst->pfileHistory);
+        fwrite("\n", sizeof(char), 1, m_pInst->pfileHistory);
+    } else {
+        m_CorePrintMessage(3, 10);    /* history nofile*/
+    }
+} /* m_HistoryWriteFile() */
+
+
+/*----------------------------------------------------------------------------*/
+void Microshell::m_HistoryCloseFile(void)
+{
+    if(nullptr != m_pInst->pfileHistory) {
+        fclose(m_pInst->pfileHistory);
+        m_pInst->pfileHistory = nullptr;
+    }
+} /* m_HistoryCloseFile() */
+#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
 
 
 /*==============================================================================

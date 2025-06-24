@@ -35,12 +35,13 @@ class Microshell
 
 public:
 
-    static Microshell *getShellPtr(uShellInst_s *psShellInst, const char *pstrPromptExt);
+    static Microshell *getShellPtr( uShellInst_s *psShellInst, const char *pstrPromptExt );
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
-    static std::shared_ptr<Microshell> getShellSharedPtr(uShellInst_s *psShellInst, const char *pstrPromptExt);
+    static std::shared_ptr<Microshell> getShellSharedPtr( uShellInst_s *psShellInst, const char *pstrPromptExt );
 #endif /*(1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)*/
-    void Run(void);
-    bool Execute(const char *pstrCommand);
+    void Run( void );
+    bool Execute( const char *pstrCommand );
+    ~Microshell();
 
 private:
 
@@ -151,6 +152,7 @@ private:
 #if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
     static void m_HistoryInitFile( const char *pstrFileName );
     static void m_HistoryWriteFile( void );
+    static void m_HistoryCloseFile( void );
 #endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
 
     /* autocomplete functions */
