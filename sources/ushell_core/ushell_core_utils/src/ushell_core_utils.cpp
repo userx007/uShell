@@ -10,7 +10,7 @@
 char *strtok_ex(char *str, const char *delim, char **saveptr)
 {
     if (!delim || (!str && !*saveptr) || !*delim) {
-        return NULL;
+        return nullptr;
     }
 
     if (!str) {
@@ -26,7 +26,7 @@ char *strtok_ex(char *str, const char *delim, char **saveptr)
     }
 
     if (!*str) {
-        return NULL;
+        return nullptr;
     }
 
     char *token = str;
@@ -43,7 +43,7 @@ char *strtok_ex(char *str, const char *delim, char **saveptr)
         *str = '\0';
         *saveptr = str + 1;
     } else {
-        *saveptr = NULL;
+        *saveptr = nullptr;
     }
 
     return token;
@@ -202,7 +202,7 @@ void hexlify(const uint8_t *bytes, size_t length, char *output)
         output[i * 2]     = hex_chars[(bytes[i] >> 4) & 0x0F];
         output[i * 2 + 1] = hex_chars[bytes[i] & 0x0F];
     }
-    output[length * 2] = '\0'; // Null-terminate the string
+    output[length * 2] = '\0'; // nullptr-terminate the string
 }
 
 

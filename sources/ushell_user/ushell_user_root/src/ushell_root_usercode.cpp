@@ -53,6 +53,12 @@ static int privListPlugins (const char *pstrCaption, const char *pstrPath, const
 //            USER COMMANDS IMPLEMENTATION                       //
 ///////////////////////////////////////////////////////////////////
 
+int vtest(void)
+{
+    uSHELL_LOG(LOG_VERBOSE, "--> vtest()" );
+    return 0;
+}
+
 
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
 /*------------------------------------------------------------
@@ -134,6 +140,7 @@ void uShellUserHandleShortcut_Slash( const char *pstrArgs )
 /*------------------------------------------------------------
  * list the available plugins
 ------------------------------------------------------------*/
+#if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
 static int privListPlugins (const char *pstrCaption, const char *pstrPath, const char *pstrExtension)
 {
     #define MAX_WORKBUFFER_SIZE    128U
@@ -143,13 +150,13 @@ static int privListPlugins (const char *pstrCaption, const char *pstrPath, const
 
     uSHELL_LOG(LOG_INFO, "--- %s plugins ---", pstrCaption);
 
-    if (NULL == dir) {
+    if (nullptr == dir) {
         uSHELL_LOG(LOG_ERROR, "Failed to open the plugins folder [%s]", pstrPath);
         return 1;
     }
 
-    while ((entry = readdir(dir)) != NULL) {
-        if (strstr(entry->d_name, pstrExtension) != NULL) {
+    while ((entry = readdir(dir)) != nullptr) {
+        if (strstr(entry->d_name, pstrExtension) != nullptr) {
             size_t name_len = strlen(entry->d_name);
             size_t ext_len = strlen(pstrExtension);
 
@@ -172,4 +179,6 @@ static int privListPlugins (const char *pstrCaption, const char *pstrPath, const
     return 0;
 
 } /* privListPlugins() */
+#endif /* (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES) */
+
 

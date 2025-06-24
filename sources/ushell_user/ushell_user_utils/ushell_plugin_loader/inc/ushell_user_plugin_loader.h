@@ -127,7 +127,7 @@ public:
 
         if (std::filesystem::exists(strPluginPathName)) {
 #ifdef _WIN32
-            LibHandle hPlugin = LoadLibraryEx(TEXT(strPluginPathName.c_str()), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+            LibHandle hPlugin = LoadLibraryEx(TEXT(strPluginPathName.c_str()), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
 #else
             LibHandle hPlugin = dlopen(strPluginPathName.c_str(), RTLD_NOW);
 #endif
