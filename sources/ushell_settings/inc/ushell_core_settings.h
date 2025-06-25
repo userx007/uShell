@@ -86,12 +86,6 @@
     #define uSHELL_IMPLEMENTS_HISTORY            0
 #endif /*(0 == uSHELL_HISTORY_DEPTH)*/
 
-/* disable save history if the history itself is disabled */
-#if (0 == uSHELL_IMPLEMENTS_HISTORY)
-    #undef  uSHELL_IMPLEMENTS_SAVE_HISTORY
-    #define uSHELL_IMPLEMENTS_SAVE_HISTORY       0
-#endif /*(0 == uSHELL_IMPLEMENTS_HISTORY)*/
-
 /* script mode will disable all the "exotic" features */
 #if (1 == uSHELL_SCRIPT_MODE)
     #undef  uSHELL_IMPLEMENTS_HISTORY
