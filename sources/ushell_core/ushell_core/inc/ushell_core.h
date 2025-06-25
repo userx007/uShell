@@ -43,7 +43,6 @@ public:
 #if (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER)
     bool Execute( const char *pstrCommand );
 #endif /* (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER) */
-    ~Microshell();
 
 private:
 

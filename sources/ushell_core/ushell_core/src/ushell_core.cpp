@@ -93,6 +93,9 @@ void Microshell::Run(void)
 #if (1 == uSHELL_IMPLEMENTS_HISTORY)
         m_HistoryDeInit();
 #endif /* (1 == uSHELL_IMPLEMENTS_HISTORY) */
+#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
+        m_HistoryCloseFile();
+#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY) */
         uSHELL_PRINTF(FRMT(uSHELL_INFO_LIST_COLOR,"uShell exit!\n\r"));
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
     } else {
@@ -139,15 +142,6 @@ Microshell::Microshell(uShellInst_s *psShellInst, const char *pstrPromptExt)
     m_pInst = psShellInst;
     m_Init(pstrPromptExt);
 } /* Microshell() */
-
-
-/*----------------------------------------------------------------------------*/
-Microshell::~Microshell()
-{
-#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-    m_HistoryCloseFile();
-#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY) */
-} /* ~Microshell() */
 
 
 /*----------------------------------------------------------------------------*/
@@ -1397,7 +1391,7 @@ inline void Microshell::m_CorePrintPrompt(void)
 bool Microshell::m_CircBufInit(void)
 {
     static bool bInit = false;
-    bool bSuccess = true;
+    bool bRetVal = true;
 
     if (!bInit) {
         const size_t dataSize = uSHELL_HISTORY_DEPTH * sizeof(void*);
@@ -1419,7 +1413,7 @@ bool Microshell::m_CircBufInit(void)
                 m_sCircBuf.pDataSize = nullptr;
             }
 
-            bSuccess = false;
+            bRetVal = false;
         } else {
             memset(m_sCircBuf.ppData, 0, dataSize);
             memset(m_sCircBuf.pDataSize, 0, sizeSize);
@@ -1428,7 +1422,7 @@ bool Microshell::m_CircBufInit(void)
         }
     }
 
-    return bSuccess;
+    return bRetVal;
 } /* m_CircBufInit()*/
 
 
@@ -1440,6 +1434,7 @@ void Microshell::m_CircBufFreeMem(const bool bFull)
             if(m_sCircBuf.ppData[i] != nullptr) {
                 free(m_sCircBuf.ppData[i]);
                 m_sCircBuf.ppData[i] = nullptr;
+                m_sCircBuf.pDataSize[i] = 0;
             }
         }
         if(true == bFull) {
@@ -1850,7 +1845,6 @@ void Microshell::m_HistoryWriteFile(void)
 /*----------------------------------------------------------------------------*/
 void Microshell::m_HistoryCloseFile(void)
 {
-
     if(nullptr != m_pInst->pfileHistory) {
         fclose(m_pInst->pfileHistory);
         m_pInst->pfileHistory = nullptr;
