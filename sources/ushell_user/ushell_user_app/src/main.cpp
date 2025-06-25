@@ -1,6 +1,6 @@
+#pragma warning(disable : 4668 5039 4710 4711 4820)
 #include "ushell_core.h"
 #include "ushell_core_terminal.h"
-
 
 // valgrind --leak-check=yes --track-origins=yes --leak-check=full --show-leak-kinds=all  ./ushell
 
