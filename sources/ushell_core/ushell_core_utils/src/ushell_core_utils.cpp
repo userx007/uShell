@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <ctype.h>
 #include <stdint.h>
-
+#include <string.h>
 
 /*----------------------------------------------------------------------------*/
 char *strtok_ex(char *str, const char *delim, char **saveptr)
@@ -239,3 +239,66 @@ bool unhexlify(const char *hexstr, uint8_t *output, size_t *out_len)
     return true;
 }
 #endif /* (1 == uSHELL_IMPLEMENTS_HEXLIFY) */
+
+
+/*----------------------------------------------------------------------------*/
+char* trim_whitespace_inplace(char *str) {
+    if (!str) return str;
+    
+    // Trim leading whitespace
+    while (*str && isspace((unsigned char)*str)) {
+        str++;
+    }
+    
+    // Trim trailing whitespace (null terminate)
+    char *end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end)) {
+        *end = '\0';
+        end--;
+    }
+    
+    return str;
+}
+
+
+/*----------------------------------------------------------------------------*/
+bool strings_equal_trimmed(const char *s1, const char *s2) {
+    // Skip leading whitespace
+    while (*s1 && isspace((unsigned char)*s1)) s1++;
+    while (*s2 && isspace((unsigned char)*s2)) s2++;
+    
+    // Compare content
+    while (*s1 && *s2) {
+        if (*s1 != *s2) return false;
+        s1++;
+        s2++;
+    }
+    
+    // Skip trailing whitespace
+    while (*s1 && isspace((unsigned char)*s1)) s1++;
+    while (*s2 && isspace((unsigned char)*s2)) s2++;
+    
+    return (*s1 == '\0' && *s2 == '\0');
+}
+
+/*----------------------------------------------------------------------------*/
+void trim_whitespace(const char *input, char *output, size_t output_size) {
+    if (output_size == 0) return;
+    
+    // Skip leading whitespace
+    while (*input && isspace((unsigned char)*input)) {
+        input++;
+    }
+    
+    // Copy string
+    size_t len = 0;
+    while (*input && len < output_size - 1) {
+        output[len++] = *input++;
+    }
+    output[len] = '\0';
+    
+    // Remove trailing whitespace
+    while (len > 0 && isspace((unsigned char)output[len - 1])) {
+        output[--len] = '\0';
+    }
+}

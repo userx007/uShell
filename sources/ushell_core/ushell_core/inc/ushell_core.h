@@ -1,23 +1,5 @@
 /*
-MIT License Copyright (c) 2022, Victor Marian Popa ( victormarianpopa@gmail.com )
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+MIT License Copyright (c) 2022, Victor Marian Popa (victormarianpopa@gmail.com)
 */
 
 #ifndef USHELL_CORE_H
@@ -29,6 +11,10 @@ THE SOFTWARE.
 #endif /* (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES) */
 
 #define uSHELL_VERSION "1.0.0"
+
+/*==============================================================================
+                    MICROSHELL CLASS DEFINITION
+==============================================================================*/
 
 class Microshell
 {
@@ -122,18 +108,7 @@ private:
 #endif /* (1 == uSHELL_IMPLEMENTS_EDITMODE) */
 
 #if (1 == uSHELL_IMPLEMENTS_HISTORY)
-    /* circular buffer functions */
-    static bool m_CircBufInit( void );
-    static void m_CircBufDeinit( const deinit_e eTyp);
-    static bool m_CircBufWrite( const void *pElem, const size_t szElemSize);
-    static bool m_CircBufRead( dir_e eDir, void *pElem, size_t *pszSize);
-    static int  m_CircBufShow( void );
-    static bool m_CircBufItemExists( const void* pElem);
-    static void m_CircBufFlagsReset( void );
-    static char* m_CircBufGetItem( const int iIndex );
-    static void m_CircBufFreeMem( const bool bFull );
-
-    /* history functions */
+    /* History wrapper functions */
     static void m_HistoryInit( const char *pstrFileName );
     static void m_HistoryDeInit( void );
     static void m_HistoryWrite( void );
@@ -143,18 +118,41 @@ private:
     static void m_HistoryRead( const dir_e eDir );
     static char* m_HistoryGetEntry( int iIndex );
     static void m_HistoryEnable( const bool bEnable );
+    
+    /* Embedded history implementation functions */
+    static void m_HistoryInitCore(History *history, char *data_buffer, size_t capacity);
+    static bool m_HistoryPush(History *history, bool trigger_auto_save);
+    static bool m_HistoryGetPrevEntry(History *history, char *buffer, size_t buffer_size);
+    static bool m_HistoryGetNextEntry(History *history, char *buffer, size_t buffer_size);
+    static bool m_HistoryGetFirstEntry(const History *history, char *buffer, size_t buffer_size);
+    static bool m_HistoryGetLastEntry(const History *history, char *buffer, size_t buffer_size);
+    static void m_HistorySetIndex(History *history, size_t index);
+    static bool m_HistoryIsEmpty(const History *history);
+    static bool m_HistoryGetEntryAtIndex(const History *history, size_t index, char *buffer, size_t buffer_size);
+    static void m_HistoryClear(History *history);
+    static void m_HistoryGetFreeSpace(const History *history, size_t *free_bytes, size_t *free_entries);
+    static size_t m_HistoryGetEntrySize(const History *history);
+    static void m_HistoryIteratorInit(HistoryIter *iter, const History *history);
+    static bool m_HistoryIteratorNext(HistoryIter *iter, char *buffer, size_t buffer_size);
+    static void m_HistoryShow(const History *history);
+
+    /* Helpers */
+    static void m_HistoryWriteLengthAt(char *buffer, size_t capacity, size_t pos, uint16_t len);
+    static uint16_t m_HistoryReadLengthAt(const char *buffer, size_t capacity, size_t pos);
+    static inline size_t m_HistoryEntryTotalSize(uint16_t data_len);
+    static size_t m_HistoryFindNextEntryPos(const History *h, size_t pos);
+    static size_t m_HistoryCalculateUsedSpace(const History *h);
+    static void m_HistoryRemoveOldestEntry(History *h);
 #endif /* (1 == uSHELL_IMPLEMENTS_HISTORY) */
 
 #if ((1 == uSHELL_IMPLEMENTS_HISTORY) && (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY))
     static void m_HistoryReload( void );
-    static void m_HistoryLoadFromFile( void );
-#endif /*((1 == uSHELL_IMPLEMENTS_HISTORY) && (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY))*/
-
-#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
+    static void m_HistorySetFilePath(History *history, const char *filepath);
+    static bool m_HistoryLoadFromFile(History *history);
+    static void m_HistoryEnableAutoSave(History *history, bool enable);
+    static bool m_HistoryAppendToFile(History *history, const char *entry);
     static void m_HistoryInitFile( const char *pstrFileName );
-    static void m_HistoryWriteFile( void );
-    static void m_HistoryCloseFile( void );
-#endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
+#endif /*((1 == uSHELL_IMPLEMENTS_HISTORY) && (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY))*/
 
     /* autocomplete functions */
 #if (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE)
@@ -183,8 +181,14 @@ private:
 #endif /* (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE) */
 
 #if (1 == uSHELL_IMPLEMENTS_HISTORY)
-    static circbuf_s m_sCircBuf;
-    static history_s m_sHistory;
+    /* Embedded history implementation data */
+    static History m_sHistory;
+    static char m_historyBuffer[uSHELL_HISTORY_BUFFER_SIZE];
+    static bool m_bHistoryEnabled;
+    static bool m_bHistoryInitialized;
+#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
+    static char m_HistoryFilePath[uSHELL_HISTORY_FILEPATH_LENGTH];
+#endif
 #endif /* (1 == uSHELL_IMPLEMENTS_HISTORY) */
 
 #if (1 == uSHELL_IMPLEMENTS_EDITMODE)

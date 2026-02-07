@@ -22,4 +22,7 @@ char *strtok_ex( char *str, const char *delim, char **saveptr );
     bool unhexlify( const char *hexstr, uint8_t *output, size_t *out_len);
 #endif /* (1 == uSHELL_IMPLEMENTS_HEXLIFY) */
 
+char* trim_whitespace_inplace(char *str);
+bool strings_equal_trimmed(const char *s1, const char *s2);
+
 #endif /* USHELL_CORE_UTILS_H */

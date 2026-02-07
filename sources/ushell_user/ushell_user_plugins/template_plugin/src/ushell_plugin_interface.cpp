@@ -122,7 +122,7 @@ static uShellInst_s sShellInstance = {
     .piAutocompleteIndexArray                               = g_viAutocompleteIndexArray,
 #endif /* (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE) */
 #if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-    .pfileHistory                                           = nullptr,
+    .pstrPromptName                                    = nullptr,
 #endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
 #if (1 == uSHELL_IMPLEMENTS_SHELL_EXIT)
     .bKeepRuning                                            = true,

@@ -56,20 +56,23 @@ typedef enum {
 
 #if (1 == uSHELL_IMPLEMENTS_HISTORY)
 typedef struct {
-    void**  ppData;
-    size_t* pDataSize;
-    int     iCrtPosWrite;
-    int     iCrtPosRead;
-    dir_e   ePrevDir;
-    bool    bIsFull;
-    bool    bIsEmpty;
-} circbuf_s;
+    char *data;              // Buffer pointer
+    size_t htc;              // Buffer capacity
+    size_t data_head;        // Next write position
+    size_t entry_oldest;     // Oldest entry position
+    size_t entry_count;      // Number of entries
+    size_t current_index;    // Navigation position
+#if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
+    char *file_path;
+    bool auto_save;
+#endif  
+} History;
 
 typedef struct {
-    bool      bInitialized;
-    bool      bEnabled;
-} history_s;
-#endif /*(1 == uSHELL_IMPLEMENTS_HISTORY)*/
+    const History *history;
+    size_t index;
+} HistoryIter;
+#endif /* (1 == uSHELL_IMPLEMENTS_HISTORY) */
 
 #if (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE)
 typedef struct {
@@ -153,7 +156,7 @@ typedef struct {
     int                    *piAutocompleteIndexArray;
 #endif /* (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE) */
 #if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-    FILE                  *pfileHistory;
+    const char             *pstrPromptName;
 #endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
 #if (1 == uSHELL_IMPLEMENTS_SHELL_EXIT)
     bool                    bKeepRuning;
