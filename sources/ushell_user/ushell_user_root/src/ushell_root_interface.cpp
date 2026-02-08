@@ -2,7 +2,11 @@
 #include "ushell_root_datatypes.h"
 
 /* user commands dispatcher */
-static int uShellExecuteCommand(const command_s *psCmd);
+static int uShellExecuteCommand( const command_s *psCmd );
+
+#if (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)
+    void *pvLocalUserData = nullptr;
+#endif /* (1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA) */
 
 /* disable warnings */
 #if defined (__GNUC__) && defined(__AVR__)
@@ -128,25 +132,6 @@ static uShellInst_s sShellInstance = {
     .iPromptLength                                          = 0
 };
 
-
-/******************************************************************************/
-/**
- * @brief Execute a shell command based on parsed command structure
- * @param psCmd Pointer to command structure with parsed parameters
- * @return Error code from uSHELL_ERR_* enumeration
- */
-static int uShellExecuteCommand(const command_s *psCmd)
-{
-    /* void:v, (byte)u8:b:vb, (word)u16:w:vw, (int)u32:i:vi, (long)u64:l:vl, float:f:vf, string:s:vs, bool:o:vo */
-    switch(g_vsFuncDefExArray[psCmd->iFctIndex].eParamType) {
-        case v_type          :return g_vsFuncDefExArray[psCmd->iFctIndex].uFctType.v_fct();
-        case s_type          :return g_vsFuncDefExArray[psCmd->iFctIndex].uFctType.s_fct(psCmd->vs[0]);
-        case lio_type        :return g_vsFuncDefExArray[psCmd->iFctIndex].uFctType.lio_fct(psCmd->vl[0], psCmd->vi[0], psCmd->vo[0]);
-        default              :return uSHELL_ERR_PARAMS_PATTERN_NOT_IMPLEM;
-    }
-} /* uShellExecuteCommand() */
-
-
 /******************************************************************************/
 /**
  * @brief Plugin entry point - initializes and returns shell instance
@@ -158,12 +143,15 @@ uShellPluginInterface *uShellPluginEntry(void *pvUserData)
 {
     pvLocalUserData = pvUserData;
     return &sShellInstance;
-}
+} /* uShellPluginEntry( void *pvUserData ) */
+
 #else
+
 uShellPluginInterface *uShellPluginEntry(void)
 {
     return &sShellInstance;
-}
+} /*uShellPluginEntry() */
+
 #endif /*(1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
 
 
@@ -172,7 +160,6 @@ uShellPluginInterface *uShellPluginEntry(void)
  * @brief Plugin exit point - performs cleanup when plugin is unloaded
  * @param ptrPlugin Pointer to the plugin interface being cleaned up
  * 
- * ENHANCED: Added proper cleanup implementation
  * This function is called when a plugin is being unloaded or when the shell
  * instance is being destroyed. It provides a hook for resource cleanup.
  */
@@ -207,4 +194,23 @@ void uShellPluginExit(uShellPluginInterface *ptrPlugin)
      * For dynamically loaded plugins, the OS will reclaim this memory when
      * the shared library is unloaded.
      */
-}
+} /* uShellPluginExit() */
+
+
+/******************************************************************************/
+/**
+ * @brief Execute a shell command based on parsed command structure
+ * @param psCmd Pointer to command structure with parsed parameters
+ * @return Error code from uSHELL_ERR_* enumeration
+ */
+static int uShellExecuteCommand(const command_s *psCmd)
+{
+    /* void:v, (byte)u8:b:vb, (word)u16:w:vw, (int)u32:i:vi, (long)u64:l:vl, float:f:vf, string:s:vs, bool:o:vo */
+    switch(g_vsFuncDefExArray[psCmd->iFctIndex].eParamType) {
+        case v_type          :return g_vsFuncDefExArray[psCmd->iFctIndex].uFctType.v_fct();
+        case s_type          :return g_vsFuncDefExArray[psCmd->iFctIndex].uFctType.s_fct(psCmd->vs[0]);
+        case lio_type        :return g_vsFuncDefExArray[psCmd->iFctIndex].uFctType.lio_fct(psCmd->vl[0], psCmd->vi[0], psCmd->vo[0]);
+        default              :return uSHELL_ERR_PARAMS_PATTERN_NOT_IMPLEM;
+    }
+} /* uShellExecuteCommand() */
+
