@@ -117,7 +117,7 @@ static uShellInst_s sShellInstance = {
     .piAutocompleteIndexArray                               = g_viAutocompleteIndexArray,
 #endif /* (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE) */
 #if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-    .pstrPromptName                                    = nullptr,
+    .pstrPromptName                                         = nullptr,
 #endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
 #if (1 == uSHELL_IMPLEMENTS_SHELL_EXIT)
     .bKeepRuning                                            = true,
@@ -156,6 +156,13 @@ static int uShellExecuteCommand( const command_s *psCmd )
         return &sShellInstance;
     }
 #endif /*(1 == uSHELL_SUPPORTS_EXTERNAL_USER_DATA)*/
-void uShellPluginExit( uShellPluginInterface *ptrPlugin );
 
 
+/******************************************************************************/
+/* FIXED: Added implementation for uShellPluginExit */
+void uShellPluginExit( uShellPluginInterface *ptrPlugin )
+{
+    /* Plugin cleanup code can be added here if needed */
+    /* For now, this is a no-op implementation to satisfy the linker */
+    (void)ptrPlugin; /* Avoid unused parameter warning */
+}
