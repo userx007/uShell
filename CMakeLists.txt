@@ -4,6 +4,14 @@ project (ushell)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED)
 
+# Enable warnings project-wide
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(-Wall -Wextra -Wpedantic)
+    add_compile_options(-Wno-cast-function-type)
+elseif(MSVC)
+    add_compile_options(/W4)
+endif()
+
 set(PLUGINS_LIST test_plugin)
 
 if(MSVC OR MSYS OR MINGW)

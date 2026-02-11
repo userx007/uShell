@@ -240,7 +240,6 @@ static int privListPlugins(const char *pstrCaption, const char *pstrPath, const 
 
     /* Cache string lengths outside loop */
     const size_t ext_len = strlen(pstrExtension);
-    const size_t prefix_len = strlen(PLUGIN_PREFIX);
     
     struct dirent *entry = nullptr;
     int plugin_count = 0;
