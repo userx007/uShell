@@ -82,7 +82,7 @@
 #define uSHELL_RESET_COLOR                       ""
 #endif /* (1 == uSHELL_SUPPORTS_COLORS) */
 
-/* disable history if depth is 0 */
+/* disable history if no buffer is reserved */
 #if (0 == uSHELL_HISTORY_BUFFER_SIZE)
     #undef  uSHELL_IMPLEMENTS_HISTORY
     #define uSHELL_IMPLEMENTS_HISTORY            0

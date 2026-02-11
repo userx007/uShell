@@ -3,13 +3,14 @@
 
 /* disable warning like: padding added after data member */
 #ifdef _MSC_VER
-    #pragma warning(disable : 4820)
+#pragma warning(disable : 4820)
 #endif
 
 #include "ushell_core_settings.h"
+
 #include <cstddef>
 #if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-    #include <cstdio>
+#include <cstdio>
 #endif /*(1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)*/
 
 #define  uSHELL_DATA_TYPES_TABLE_BEGIN      typedef enum dataType_e_ {
@@ -56,22 +57,22 @@ typedef enum {
 
 #if (1 == uSHELL_IMPLEMENTS_HISTORY)
 typedef struct {
-    char *data;              // Buffer pointer
-    size_t htc;              // Buffer capacity
-    size_t data_head;        // Next write position
-    size_t entry_oldest;     // Oldest entry position
-    size_t entry_count;      // Number of entries
-    size_t current_index;    // Navigation position
+    char *pDataBuffer;       // Buffer pointer
+    size_t szDataBufferSize; // Buffer szCapacity
+    size_t szDataHeadPos;    // Next write position
+    size_t szOldestEntryPos; // Oldest entry position
+    size_t szEntryCount;     // Number of entries
+    size_t szCurrentIndex;   // Navigation position
 #if (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY)
-    char *file_path;
-    bool auto_save;
-#endif  
-} History;
+    char *pstrFilePath;
+    bool bAutoSave;
+#endif
+} history_s;
 
 typedef struct {
-    const History *history;
-    size_t index;
-} HistoryIter;
+    const history_s *pHistory;
+    size_t szIndex;
+} historyIter_s;
 #endif /* (1 == uSHELL_IMPLEMENTS_HISTORY) */
 
 #if (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE)

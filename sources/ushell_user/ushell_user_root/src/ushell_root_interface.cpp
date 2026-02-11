@@ -1,5 +1,7 @@
+#include "ushell_core_settings.h"
 #include "ushell_core_datatypes.h"
 #include "ushell_root_datatypes.h"
+
 
 /* user commands dispatcher */
 static int uShellExecuteCommand( const command_s *psCmd );
@@ -203,8 +205,7 @@ void uShellPluginExit(uShellPluginInterface *ptrPlugin)
  * @param psCmd Pointer to command structure with parsed parameters
  * @return Error code from uSHELL_ERR_* enumeration
  */
-static int uShellExecuteCommand(const command_s *psCmd)
-{
+static int uShellExecuteCommand( const command_s *psCmd ){
     /* void:v, (byte)u8:b:vb, (word)u16:w:vw, (int)u32:i:vi, (long)u64:l:vl, float:f:vf, string:s:vs, bool:o:vo */
     switch(g_vsFuncDefExArray[psCmd->iFctIndex].eParamType) {
         case v_type          :return g_vsFuncDefExArray[psCmd->iFctIndex].uFctType.v_fct();

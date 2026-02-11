@@ -13,162 +13,158 @@ MIT License Copyright (c) 2022, Victor Marian Popa (victormarianpopa@gmail.com)
 #define uSHELL_VERSION "1.0.0"
 
 /*==============================================================================
-                    MICROSHELL CLASS DEFINITION
+            MICROSHELL CLASS DEFINITION
 ==============================================================================*/
 
-class Microshell
-{
-
-public:
-
-    static Microshell *getShellPtr( uShellInst_s *psShellInst, const char *pstrPromptExt );
+class Microshell {
+  public:
+    static Microshell *getShellPtr(uShellInst_s *psShellInst, const char *pstrPromptExt);
 #if (1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)
-    static std::shared_ptr<Microshell> getShellSharedPtr( uShellInst_s *psShellInst, const char *pstrPromptExt );
+    static std::shared_ptr<Microshell> getShellSharedPtr(uShellInst_s *psShellInst, const char *pstrPromptExt);
 #endif /*(1 == uSHELL_SUPPORTS_MULTIPLE_INSTANCES)*/
-    void Run( void );
+    void Run(void);
 #if (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER)
-    bool Execute( const char *pstrCommand );
+    bool Execute(const char *pstrCommand);
 #endif /* (1 == uSHELL_SUPPORTS_COMMAND_AS_PARAMETER) */
 
-private:
-
-    Microshell( uShellInst_s *psShellInst, const char *pstrPromptExt );
+  private:
+    Microshell(uShellInst_s *psShellInst, const char *pstrPromptExt);
     /* shell core private functions */
-    static void m_Init( const char *pstrPromptExt );
-    static bool m_Execute( void );
-    static void m_CoreSetPrompt( const char *pstrPromptExt );
-    static void m_CoreExecuteEnterKey( void );
-    static int  m_CoreParseCommand( void );
-    static void m_CoreParseExecuteCommand( void );
-    static int  m_CoreSearchFunction( const char *pstrFctName );
-    static void m_CorePrintError( const int iError );
-    static void m_CorePutString( const char *pstrArray);
-    static void m_CoreProcessKeyPress( const char cKeyPressed );
-    static void m_CoreResetInput( const bool bFull );
-    static void m_CoreRemoveTrailingSpaces( void );
-    static void m_CorePrintMessage( const int iFeatIdx, const int iStatusIdx );
-    static void m_CorePrintPrompt( void );
+    static void m_Init(const char *pstrPromptExt);
+    static bool m_Execute(void);
+    static void m_CoreSetPrompt(const char *pstrPromptExt);
+    static void m_CoreExecuteEnterKey(void);
+    static int m_CoreParseCommand(void);
+    static void m_CoreParseExecuteCommand(void);
+    static int m_CoreSearchFunction(const char *pstrFctName);
+    static void m_CorePrintError(const int iError);
+    static void m_CorePutString(const char *pstrArray);
+    static void m_CoreProcessKeyPress(const char cKeyPressed);
+    static void m_CoreResetInput(const bool bFull);
+    static void m_CoreRemoveTrailingSpaces(void);
+    static void m_CorePrintMessage(const int iFeatIdx, const int iStatusIdx);
+    static void m_CorePrintPrompt(void);
 
 #if (1 == uSHELL_IMPLEMENTS_SHELL_EXIT)
-    static void m_CoreExit( void );
+    static void m_CoreExit(void);
 #endif /*(1 == uSHELL_IMPLEMENTS_SHELL_EXIT)*/
 
 #if (1 == uSHELL_IMPLEMENTS_COMMAND_HELP)
-    static void m_CoreShowInfo( const char *pstrArgs );
-    static void m_CoreShowCmdInfo( const int iFctIndex, const bool bParamInfo );
-    static void m_CoreShowShortcuts( void );
-    static void m_CoreShowTypes( void );
-    static void m_CorePutChars( const char *pstrArray, int iNrChars, const bool bNewLine );
+    static void m_CoreShowInfo(const char *pstrArgs);
+    static void m_CoreShowCmdInfo(const int iFctIndex, const bool bParamInfo);
+    static void m_CoreShowShortcuts(void);
+    static void m_CoreShowTypes(void);
+    static void m_CorePutChars(const char *pstrArray, int iNrChars, const bool bNewLine);
 #endif /* (1 == uSHELL_IMPLEMENTS_COMMAND_HELP)*/
-    static void m_CoreShowCmd( int iFctIndex );
-    static void m_CoreShowCmdsList( void );
+    static void m_CoreShowCmd(int iFctIndex);
+    static void m_CoreShowCmdsList(void);
 
 #if defined(uSHELL_IMPLEMENTS_STRINGS)
 #if (1 == uSHELL_SUPPORTS_SPACED_STRINGS)
-    static int  m_CoreHandleBorderedStrings( char **token, char **rest, int *pIntArgCounter );
-    static void m_CoreSetStringBorder( const char *pstrStringBorder );
+    static int m_CoreHandleBorderedStrings(char **ppstrToken, char **ppstrRest, int *pIntArgCounter);
+    static void m_CoreSetStringBorder(const char *pstrStringBorder);
 #endif /*(1 == uSHELL_SUPPORTS_SPACED_STRINGS)*/
 #endif /*defined(uSHELL_IMPLEMENTS_STRINGS)*/
 
     /* core key handlers */
-    static void m_CoreHandleKeyEnter( void );
-    static void m_CoreHandleKeyDefault( const char cKeyPressed );
-    static bool m_CoreHandleShortcuts( void );
-    static bool m_CoreIsShortcutSymbol( const char cKey );
-    static void m_CoreHandleShortcut_Hash( const char *pstrArgs );
+    static void m_CoreHandleKeyEnter(void);
+    static void m_CoreHandleKeyDefault(const char cKeyPressed);
+    static bool m_CoreHandleShortcuts(void);
+    static bool m_CoreIsShortcutSymbol(const char cKey);
+    static void m_CoreHandleShortcut_Hash(const char *pstrArgs);
 
 #if (1 == uSHELL_IMPLEMENTS_EDITMODE) || (1 == uSHELL_IMPLEMENTS_HISTORY)
-    static void m_CoreHandleKeyArrowUpDown( const dir_e eDir );
+    static void m_CoreHandleKeyArrowUpDown(const dir_e eDir);
 #endif /*(1 == uSHELL_IMPLEMENTS_EDITMODE) || (1 == uSHELL_IMPLEMENTS_HISTORY)*/
 
 #if (1 == uSHELL_IMPLEMENTS_EDITMODE) || (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE)
-    static void m_CoreHandleKeyArrowLeftRight( const dir_e eDir );
+    static void m_CoreHandleKeyArrowLeftRight(const dir_e eDir);
 #endif /*(1 == uSHELL_IMPLEMENTS_EDITMODE) || (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE)*/
 
-    static void m_CoreHandleKeyEscapeSeq( void );
-    static void m_CoreHandleKeyBackspace( void );
-    static void m_CoreHandleKeyDelete( void );
-    static void m_CoreCmdLineDelete( void );
+    static void m_CoreHandleKeyEscapeSeq(void);
+    static void m_CoreHandleKeyBackspace(void);
+    static void m_CoreHandleKeyDelete(void);
+    static void m_CoreCmdLineDelete(void);
 
 #if (1 == uSHELL_IMPLEMENTS_CONFIRM_REQUEST)
-    static bool m_CoreConfirmRequest( void );
+    static bool m_CoreConfirmRequest(void);
 #endif /*(1 == uSHELL_IMPLEMENTS_CONFIRM_REQUEST)*/
 
 #if (1 == uSHELL_IMPLEMENTS_EDITMODE)
-    static bool m_EditMoveCursor( const dir_e eDir );
-    static void m_EditMoveCursorDirSteps( const dir_e eDir, const int iSteps );
-    static void m_EditInsertUnderCursor( const char cKeyPressed );
-    static void m_EditDeleteUnderCursor( void );
-    static void m_EditDeleteBackward( void );
-    static void m_EditDeleteBackwardToHome( void );
-    static void m_EditDeleteForwardToEnd( void );
+    static bool m_EditMoveCursor(const dir_e eDir);
+    static void m_EditMoveCursorDirSteps(const dir_e eDir, const int iSteps);
+    static void m_EditInsertUnderCursor(const char cKeyPressed);
+    static void m_EditDeleteUnderCursor(void);
+    static void m_EditDeleteBackward(void);
+    static void m_EditDeleteBackwardToHome(void);
+    static void m_EditDeleteForwardToEnd(void);
 #if !defined(uSHELL_EDIT_MODE_DEFAULT_ACTIVE)
-    static void m_CoreHandleKeyInsert( void );
+    static void m_CoreHandleKeyInsert(void);
 #endif /* !defined(uSHELL_EDIT_MODE_DEFAULT_ACTIVE) */
 #endif /* (1 == uSHELL_IMPLEMENTS_EDITMODE) */
 
 #if (1 == uSHELL_IMPLEMENTS_HISTORY)
-    /* History wrapper functions */
-    static void m_HistoryInit( const char *pstrFileName );
-    static void m_HistoryDeInit( void );
-    static void m_HistoryWrite( void );
-    static void m_HistoryReset( void );
-    static void m_HistoryList( void );
-    static void m_HistoryExecuteEntry( const char *pstrIndex );
-    static void m_HistoryRead( const dir_e eDir );
-    static char* m_HistoryGetEntry( int iIndex );
-    static void m_HistoryEnable( const bool bEnable );
-    
+    /* history wrapper functions */
+    static void m_HistoryInit(const char *pstrFileName);
+    static void m_HistoryDeInit(void);
+    static void m_HistoryWrite(void);
+    static void m_HistoryReset(void);
+    static void m_HistoryList(void);
+    static void m_HistoryExecuteEntry(const char *pstrIndex);
+    static void m_HistoryRead(const dir_e eDir);
+    static char *m_HistoryGetEntry(int iIndex);
+    static void m_HistoryEnable(const bool bEnable);
+
     /* Embedded history implementation functions */
-    static void m_HistoryInitCore(History *history, char *data_buffer, size_t capacity);
-    static bool m_HistoryPush(History *history, bool trigger_auto_save);
-    static bool m_HistoryGetPrevEntry(History *history, char *buffer, size_t buffer_size);
-    static bool m_HistoryGetNextEntry(History *history, char *buffer, size_t buffer_size);
-    static bool m_HistoryGetFirstEntry(const History *history, char *buffer, size_t buffer_size);
-    static bool m_HistoryGetLastEntry(const History *history, char *buffer, size_t buffer_size);
-    static void m_HistorySetIndex(History *history, size_t index);
-    static bool m_HistoryIsEmpty(const History *history);
-    static bool m_HistoryGetEntryAtIndex(const History *history, size_t index, char *buffer, size_t buffer_size);
-    static void m_HistoryClear(History *history);
-    static void m_HistoryGetFreeSpace(const History *history, size_t *free_bytes, size_t *free_entries);
-    static size_t m_HistoryGetEntrySize(const History *history);
-    static void m_HistoryIteratorInit(HistoryIter *iter, const History *history);
-    static bool m_HistoryIteratorNext(HistoryIter *iter, char *buffer, size_t buffer_size);
-    static void m_HistoryShow(const History *history);
+    static void m_HistoryInitCore(history_s *pHistory, char *pDataBuffer, size_t szCapacity);
+    static bool m_HistoryPush(history_s *pHistory, bool bTriggerAutosave);
+    static bool m_HistoryGetPrevEntry(history_s *pHistory, char *pBuffer, size_t szBufferSize);
+    static bool m_HistoryGetNextEntry(history_s *pHistory, char *pBuffer, size_t szBufferSize);
+    static bool m_HistoryGetFirstEntry(const history_s *pHistory, char *pBuffer, size_t szBufferSize);
+    static bool m_HistoryGetLastEntry(const history_s *pHistory, char *pBuffer, size_t szBufferSize);
+    static void m_HistorySetIndex(history_s *pHistory, size_t szIndex);
+    static bool m_HistoryIsEmpty(const history_s *pHistory);
+    static bool m_HistoryGetEntryAtIndex(const history_s *pHistory, size_t szIndex, char *pBuffer, size_t szBufferSize);
+    static void m_HistoryClear(history_s *pHistory);
+    static void m_HistoryGetFreeSpace(const history_s *pHistory, size_t *pszFreeBytes);
+    static size_t m_HistoryGetEntrySize(const history_s *pHistory);
+    static void m_HistoryIteratorInit(historyIter_s *pIter, const history_s *pHistory);
+    static bool m_HistoryIteratorNext(historyIter_s *pIter, char *pBuffer, size_t szBufferSize);
+    static void m_HistoryShow(const history_s *pHistory);
 
     /* Helpers */
-    static void m_HistoryWriteLengthAt(char *buffer, size_t capacity, size_t pos, uint16_t len);
-    static uint16_t m_HistoryReadLengthAt(const char *buffer, size_t capacity, size_t pos);
-    static inline size_t m_HistoryEntryTotalSize(uint16_t data_len);
-    static size_t m_HistoryFindNextEntryPos(const History *h, size_t pos);
-    static size_t m_HistoryCalculateUsedSpace(const History *h);
-    static void m_HistoryRemoveOldestEntry(History *h);
+    static void m_HistoryWriteLengthAt(char *pBuffer, size_t szCapacity, size_t szPos, uint16_t u16Len);
+    static uint16_t m_HistoryReadLengthAt(const char *pBuffer, size_t szCapacity, size_t szPos);
+    static inline size_t m_HistoryEntryTotalSize(uint16_t u16DataLen);
+    static size_t m_HistoryFindNextEntryPos(const history_s *pHistory, size_t szPos);
+    static size_t m_HistoryCalculateUsedSpace(const history_s *pHistory);
+    static void m_HistoryRemoveOldestEntry(history_s *pHistory);
 #endif /* (1 == uSHELL_IMPLEMENTS_HISTORY) */
 
 #if ((1 == uSHELL_IMPLEMENTS_HISTORY) && (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY))
-    static void m_HistoryReload( void );
-    static void m_HistorySetFilePath(History *history, const char *filepath);
-    static bool m_HistoryLoadFromFile(History *history);
-    static void m_HistoryEnableAutoSave(History *history, bool enable);
-    static bool m_HistoryAppendToFile(History *history, const char *entry);
-    static void m_HistoryInitFile( const char *pstrFileName );
+    static void m_HistoryReload(void);
+    static void m_HistorySetFilePath(history_s *pHistory, const char *pstrFilePath);
+    static bool m_HistoryLoadFromFile(history_s *pHistory);
+    static void m_HistoryEnableAutoSave(history_s *pHistory, bool bEnable);
+    static bool m_HistoryAppendToFile(history_s *pHistory, const char *pstrEntry);
+    static void m_HistoryInitFile(const char *pstrFileName);
 #endif /*((1 == uSHELL_IMPLEMENTS_HISTORY) && (1 == uSHELL_IMPLEMENTS_SAVE_HISTORY))*/
 
     /* autocomplete functions */
 #if (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE)
-    static void m_AutocomplInit( void );
-    static void m_AutocomplFill( const bool bFull );
-    static void m_AutocomplReInit( void );
-    static void m_AutocomplReset( const bool bReinit );
-    static void m_AutocomplGetCommon( void );
-    static void m_AutocomplFilter( void );
-    static void m_AutocomplInsEndSpace( void );
-    static void m_AutocomplRead( const dir_e eDir );
-    static void m_AutocomplEnable( const bool bEnable );
+    static void m_AutocomplInit(void);
+    static void m_AutocomplFill(const bool bFull);
+    static void m_AutocomplReInit(void);
+    static void m_AutocomplReset(const bool bReinit);
+    static void m_AutocomplGetCommon(void);
+    static void m_AutocomplFilter(void);
+    static void m_AutocomplInsEndSpace(void);
+    static void m_AutocomplRead(const dir_e eDir);
+    static void m_AutocomplEnable(const bool bEnable);
 #endif /* (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE) */
 
 #if (1 == uSHELL_IMPLEMENTS_KEY_DECODER)
-    static void keydecoder( void );
+    static void keydecoder(void);
 #endif /*(1 == uSHELL_IMPLEMENTS_KEY_DECODER)*/
 
     static char m_pstrInput[uSHELL_MAX_INPUT_BUF_LEN];
@@ -181,8 +177,8 @@ private:
 #endif /* (1 == uSHELL_IMPLEMENTS_AUTOCOMPLETE) */
 
 #if (1 == uSHELL_IMPLEMENTS_HISTORY)
-    /* Embedded history implementation data */
-    static History m_sHistory;
+    /* Embedded history implementation */
+    static history_s m_sHistory;
     static char m_historyBuffer[uSHELL_HISTORY_BUFFER_SIZE];
     static bool m_bHistoryEnabled;
     static bool m_bHistoryInitialized;
@@ -234,7 +230,7 @@ private:
     static char m_pstrPrompt[uSHELL_PROMPTI_LAST + 1];
     static const char m_pstrPromptInfo[uSHELL_PROMPTI_LAST + 1];
     static const char m_pstrPromptInfoEditMode[uSHELL_PROMPTI_LAST + 1];
-    static void m_CoreUpdatePrompt( const prompti_e ePromptIndex, const bool bOnOff );
+    static void m_CoreUpdatePrompt(const prompti_e ePromptIndex, const bool bOnOff);
 #endif /*(1 == uSHELL_IMPLEMENTS_SMART_PROMPT)*/
 
     static uShellInst_s *m_pInst;
