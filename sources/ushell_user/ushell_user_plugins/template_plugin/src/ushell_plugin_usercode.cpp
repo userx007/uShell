@@ -89,7 +89,7 @@ int sunhexlify(char *s)
 
             if (unhexlify(s, pu8Buf, &szOutLen)) {
                 for (size_t i = 0; i < szOutLen; ++i) {
-                    uSHELL_LOG(LOG_VERBOSE, "%d : %d (0x%02X)", i, pu8Buf[i], pu8Buf[i]);
+                    uSHELL_LOG(LOG_VERBOSE, "%d : %d (0x%02X)", (int)i, pu8Buf[i], pu8Buf[i]);
                 }
                 iRetVal = 0;
             } else {
