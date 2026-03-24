@@ -487,8 +487,7 @@ inline void Microshell::m_CorePutString(const char *pstrArray) {
 } /*m_CorePutString() */
 
 /*----------------------------------------------------------------------------*/
-inline void Microshell::m_CoreRemoveTrailingSpaces(void)
-{
+inline void Microshell::m_CoreRemoveTrailingSpaces(void) {
     while(uSHELL_KEY_SPACE == m_pstrInput[--m_iInputPos]);
     m_pstrInput[++m_iInputPos] = '\0';
 } /* m_CoreRemoveTrailingSpaces() */

@@ -14,6 +14,10 @@ The shell runs on both **Linux** and **Windows** (MSVC, MinGW) and is suitable f
 
 ---
 
+![Screenshot](documentation/screenshot.png)
+
+---
+
 ## What Makes This Shell Different from Others
 
 ### 1. No need for special wrapper functions
